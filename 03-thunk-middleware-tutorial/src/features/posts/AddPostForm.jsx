@@ -10,21 +10,29 @@ const AddPostForm = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [userId, setUserId] = useState("");
+    const [createRequestStatus, setCreateRequestStatus] = useState("idle");
     const users = useSelector(selectAllUsers);
 
+    const isFormValid = [title, content, userId].every(Boolean) && createRequestStatus === "idle";
     const onChangeTitle = e => setTitle(e.target.value);
     const onChangeContent = e => setContent(e.target.value);
     const onChangeAuthor = e => setUserId(e.target.value);
     const onClickSaveButton = () => {
-        if (title && content && userId) {
-            dispatch(createPost(title, content, userId));
+        if (isFormValid) {
+            try {
+                setCreateRequestStatus("pending");
+                dispatch(createPost({ title, body: content, userId })).unwrap();
 
-            setTitle("");
-            setContent("");
-            setUserId("");
+                setTitle("");
+                setContent("");
+                setUserId("");
+            } catch (err) {
+                console.error("failed to create the post", err);
+            } finally {
+                setCreateRequestStatus("idle");
+            }
         }
     };
-    const isFormValid = title && content && userId;
 
     return (
         <section>
