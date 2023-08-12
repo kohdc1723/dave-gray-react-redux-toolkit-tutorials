@@ -38,7 +38,8 @@ export const updatePost = createAsyncThunk("posts/updatePost", async (post) => {
 
         return response.data;
     } catch (err) {
-        return post;
+        // return err.message;
+        return post; // only for this project, not recommended
     }
 });
 
